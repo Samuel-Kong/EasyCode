@@ -76,9 +76,14 @@ def generate_code(ast):
         value = ast.children[1].value
         return f'{var} = {value}'
 
-# Function to execute the generated Python code
+# Function to execute the generated Python code in a specific context
 def execute_code(code):
-    exec(code)  # This will execute Python code dynamically
+    context = {}
+    try:
+        exec(code, context)  # Execute code in the provided context
+        return context  # Return the context to fetch variable values
+    except Exception as e:
+        return f"Execution failed: {e}"
 
 # Main function to handle parsing and executing code
 def run_code(input_code):
@@ -91,9 +96,10 @@ def run_code(input_code):
     # If AST is generated, generate Python code and execute it
     if ast:
         generated_code = generate_code(ast)
-        return generated_code
+        execution_result = execute_code(generated_code)
+        return generated_code, execution_result
     else:
-        return "Error: Unable to parse the code."
+        return "Error: Unable to parse the code.", None
 
 # Streamlit UI
 st.title('Simplified Language Interpreter')
@@ -103,16 +109,17 @@ input_code = st.text_area("Enter your code here:")
 
 # Button to execute the code
 if st.button("Run Code"):
-    output = run_code(input_code)
+    generated_code, execution_result = run_code(input_code)
     
     # Show the output (generated Python code)
     st.subheader("Generated Python Code:")
-    st.code(output)
-
-    # Optionally, show the execution result (if valid)
-    try:
-        exec(output)
+    st.code(generated_code)
+    
+    # Show the execution result (values in the context)
+    if execution_result:
         st.subheader("Execution Result:")
-        st.write(f"x = {x}")  # Example output, you can add more logic here
-    except Exception as e:
-        st.error(f"Execution failed: {e}")
+        if isinstance(execution_result, dict):
+            for var, value in execution_result.items():
+                st.write(f'{var} = {value}')  # Show variables in the context
+        else:
+            st.error(execution_result)
