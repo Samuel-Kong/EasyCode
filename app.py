@@ -3,11 +3,11 @@ import re
 
 # Token specification for the language
 tokens = [
-    ('SET', r'set'),
-    ('SHOW', r'show'),
+    ('SET', r'\bset\b'),
+    ('SHOW', r'\bshow\b'),
+    ('TO', r'\bto\b'),
     ('NUMBER', r'\d+'),
     ('VARIABLE', r'[a-zA-Z_][a-zA-Z_0-9]*'),
-    ('TO', r'to'),
     ('STRING', r'"[^"]*"'),
     ('WHITESPACE', r'\s+'),
     ('MISMATCH', r'.')
@@ -19,13 +19,15 @@ def tokenize(code):
     token_specification = '|'.join(f'(?P<{pair[0]}>{pair[1]})' for pair in tokens)
     token_regex = re.compile(token_specification)
     token_list = []
+    
+    # Match tokens and store them, ignoring whitespace
     for match in re.finditer(token_regex, code):
         kind = match.lastgroup
         value = match.group()
         if kind != 'WHITESPACE':
             token_list.append((kind, value))
+    
     return token_list
-
 
 # Abstract Syntax Tree Node
 class ASTNode:
@@ -37,7 +39,7 @@ class ASTNode:
     def add_child(self, child):
         self.children.append(child)
 
-# Parsing function to create an AST
+# Parsing function to create an Abstract Syntax Tree (AST)
 def parse(tokens):
     idx = 0
     def get_token():
@@ -63,6 +65,7 @@ def parse(tokens):
                     expr_token = get_token()
                     if expr_token and expr_token[0] == 'NUMBER':
                         advance()  # number
+                        # Return an AST node with the variable and value
                         return ASTNode('set', var_token[1], expr_token[1])
         return None
 
@@ -88,7 +91,7 @@ def execute_code(code):
     except Exception as e:
         return f"Execution failed: {e}"
 
-# Tokenize the input and show the tokens for debugging
+# Main function to handle parsing and executing code
 def run_code(input_code):
     # Tokenize the input
     tokens = list(tokenize(input_code))
