@@ -1,12 +1,16 @@
 import streamlit as st
 import sys
 import io
+import re
 
-# Function to transform the simplified code into Python code
+# Function to transform the simplified code into Python code using regex
 def simplify_syntax(input_code):
     # Convert easy syntax into Python code
     input_code = input_code.replace("set", "=").replace("to", "")
-    input_code = input_code.replace("show", "print")  # Add more easy syntax replacements here
+    
+    # Use regex to replace 'show x' with 'print(x)'
+    input_code = re.sub(r'\bshow\s+(.*)', r'print(\1)', input_code)  # Capture everything after 'show' and replace
+    
     return input_code
 
 # Function to run the simplified code entered by the user
