@@ -1,5 +1,7 @@
 import streamlit as st
 import re
+import sys
+import io
 
 # Token specification for the language
 tokens = [
@@ -94,22 +96,25 @@ def execute_code(code):
     except Exception as e:
         return f"Execution failed: {e}"
 
-# Main function to handle parsing and executing code
 def run_code(input_code):
-    # Tokenize the input
-    tokens = list(tokenize(input_code))
-    st.write("Tokens:", tokens)  # Show the tokenized output for debugging
+    # Save the current stdout so we can capture the output
+    old_stdout = sys.stdout
+    sys.stdout = io.StringIO()
 
-    # Parse the tokens to create an Abstract Syntax Tree (AST)
-    ast = parse(tokens)
-    
-    # If AST is generated, generate Python code and execute it
-    if ast:
-        generated_code = generate_code(ast)
-        execution_result = execute_code(generated_code)
-        return generated_code, execution_result
-    else:
-        return "Error: Unable to parse the code.", None
+    try:
+        # Run the code entered by the user
+        exec(input_code)
+
+        # Capture the result (only the actual relevant output)
+        output = sys.stdout.getvalue()
+    except Exception as e:
+        output = f"Error: {e}"
+
+    # Reset stdout to the original
+    sys.stdout = old_stdout
+
+    # Return the captured output or any error messages
+    return output.strip()
 
 # Streamlit UI
 st.title('Simplified Language Interpreter')
