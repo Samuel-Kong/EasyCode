@@ -5,9 +5,8 @@ import re
 
 # Function to transform the simplified code into Python code using regex
 def simplify_syntax(input_code):
-
     # Replace 'set x to ask "question"' with 'x = input("question")'
-    input_code = re.sub(r'\s+ask\s+"(.*?)"', r' input("\1")', input_code)
+    input_code = re.sub(r'\bset\s+(\w+)\s+to\s+ask\s+"(.*?)"', r'\1 = input("\2")', input_code)
 
     # Replace 'set x to y' with 'x = y' (including numbers and variables)
     input_code = re.sub(r'\bset\s+(\w+)\s+to\s+(\S+)', r'\1 = \2', input_code)
@@ -26,6 +25,20 @@ def run_code(input_code):
     old_stdout = sys.stdout
     sys.stdout = io.StringIO()
 
+    # Create a dictionary to store input values for dynamic inputs
+    input_values = {}
+
+    # Replace `input()` calls with corresponding values from the input box
+    def dynamic_input(prompt):
+        input_key = prompt  # We will use the prompt text as the key to get the value
+        if input_key not in input_values:
+            # Display an input box for the user to fill in the value
+            input_values[input_key] = st.text_input(f"Input for: {input_key}", "")
+        return input_values[input_key]
+    
+    # Replace the input() function in the code with dynamic_input
+    python_code = python_code.replace("input(", "dynamic_input(")
+    
     try:
         # Execute the simplified Python code
         exec(python_code)
