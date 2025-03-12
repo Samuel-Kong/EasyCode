@@ -5,11 +5,11 @@ import re
 
 # Function to transform the simplified code into Python code using regex
 def simplify_syntax(input_code):
-    # Convert easy syntax into Python code
-    input_code = input_code.replace("set", "=").replace("to", "")
+    # Replace 'set x to y' with 'x = y'
+    input_code = re.sub(r'\bset\s+(.*?)\s+to\s+(.*)', r'\1 = \2', input_code)
     
     # Use regex to replace 'show x' with 'print(x)'
-    input_code = re.sub(r'\bshow\s+(.*)', r'print(\1)', input_code)  # Capture everything after 'show' and replace
+    input_code = re.sub(r'\bshow\s+(.*)', r'print(\1)', input_code)
     
     return input_code
 
