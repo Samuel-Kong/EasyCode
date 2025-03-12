@@ -5,8 +5,13 @@ import re
 
 # Function to transform the simplified code into Python code using regex
 def simplify_syntax(input_code):
+
+    # Replace 'set x to ask "question"' with 'x = input("question")'
+    input_code = re.sub(r'\bset\s+(\w+)\s+to\s+ask\s+"(.*)"', r'\1 = input("\2")', input_code)
+
     # Replace 'set x to y' with 'x = y'
-    input_code = re.sub(r'\bset\s+(.*?)\s+to\s+(.*)', r'\1 = \2', input_code)
+    input_code = re.sub(r'\bset\s+(\w+)\s+to\s+(\w+)', r'\1 = \2', input_code)
+    
     
     # Use regex to replace 'show x' with 'print(x)'
     input_code = re.sub(r'\bshow\s+(.*)', r'print(\1)', input_code)
