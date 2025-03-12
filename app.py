@@ -96,6 +96,8 @@ def execute_code(code):
     except Exception as e:
         return f"Execution failed: {e}"
 
+
+
 def run_code(input_code):
     # Save the current stdout so we can capture the output
     old_stdout = sys.stdout
