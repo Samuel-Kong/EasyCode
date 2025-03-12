@@ -18,11 +18,14 @@ def tokenize(code):
     code = code.strip()
     token_specification = '|'.join(f'(?P<{pair[0]}>{pair[1]})' for pair in tokens)
     token_regex = re.compile(token_specification)
+    token_list = []
     for match in re.finditer(token_regex, code):
         kind = match.lastgroup
         value = match.group()
         if kind != 'WHITESPACE':
-            yield (kind, value)
+            token_list.append((kind, value))
+    return token_list
+
 
 # Abstract Syntax Tree Node
 class ASTNode:
@@ -85,11 +88,12 @@ def execute_code(code):
     except Exception as e:
         return f"Execution failed: {e}"
 
-# Main function to handle parsing and executing code
+# Tokenize the input and show the tokens for debugging
 def run_code(input_code):
     # Tokenize the input
     tokens = list(tokenize(input_code))
-    
+    st.write("Tokens:", tokens)  # Show the tokenized output for debugging
+
     # Parse the tokens to create an Abstract Syntax Tree (AST)
     ast = parse(tokens)
     
