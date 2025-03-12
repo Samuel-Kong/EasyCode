@@ -7,7 +7,7 @@ import re
 def simplify_syntax(input_code):
 
     # Replace 'set x to ask "question"' with 'x = input("question")'
-    input_code = re.sub(r'\s+ask\s+"(.*?)"', r'input("\1")', input_code)
+    input_code = re.sub(r'\s+ask\s+"(.*?)"', r' input("\1")', input_code)
 
     # Replace 'set x to y' with 'x = y' (including numbers and variables)
     input_code = re.sub(r'\bset\s+(\w+)\s+to\s+(\S+)', r'\1 = \2', input_code)
