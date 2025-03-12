@@ -33,7 +33,10 @@ def tokenize(code):
 class ASTNode:
     def __init__(self, type, value=None):
         self.type = type
-        self.value = value
+        if isinstance(value, tuple):
+            self.value = value  # Store the tuple (variable, value) as the node's value
+        else:
+            self.value = value
         self.children = []
 
     def add_child(self, child):
@@ -65,8 +68,8 @@ def parse(tokens):
                     expr_token = get_token()
                     if expr_token and expr_token[0] == 'NUMBER':
                         advance()  # number
-                        # Return an AST node with the variable and value
-                        return ASTNode('set', var_token[1], expr_token[1])
+                        # Return an AST node with the variable and value as a tuple
+                        return ASTNode('set', (var_token[1], expr_token[1]))
         return None
 
     # Start by trying to parse a 'set' command
@@ -78,8 +81,8 @@ def parse(tokens):
 # Function to generate Python code from AST
 def generate_code(ast):
     if ast.type == 'set':
-        var = ast.children[0].value
-        value = ast.children[1].value
+        var = ast.value[0]  # Variable is the first element in the tuple
+        value = ast.value[1]  # Value is the second element in the tuple
         return f'{var} = {value}'
 
 # Function to execute the generated Python code in a specific context
