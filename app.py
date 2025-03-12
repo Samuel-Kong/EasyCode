@@ -4,8 +4,9 @@ import io
 
 # Function to transform the simplified code into Python code
 def simplify_syntax(input_code):
-    # Replace simple statements with Python equivalents
+    # Convert easy syntax into Python code
     input_code = input_code.replace("SET", "=").replace("TO", "")
+    input_code = input_code.replace("PRINT", "print")  # Add more easy syntax replacements here
     return input_code
 
 # Function to run the simplified code entered by the user
@@ -36,7 +37,7 @@ def run_code(input_code):
 st.title("EasyCode: Simple Code Executor")
 
 # Input for the user code (using the easier syntax)
-input_code = st.text_area("Enter your code:", height=200)
+input_code = st.text_area("Enter your code (use easy syntax):", height=200)
 
 # Button to run the code
 if st.button("Run Code"):
