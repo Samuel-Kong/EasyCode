@@ -5,8 +5,8 @@ import io
 # Function to transform the simplified code into Python code
 def simplify_syntax(input_code):
     # Convert easy syntax into Python code
-    input_code = input_code.replace("SET", "=").replace("TO", "")
-    input_code = input_code.replace("PRINT", "print")  # Add more easy syntax replacements here
+    input_code = input_code.replace("set", "=").replace("to", "")
+    input_code = input_code.replace("show", "print")  # Add more easy syntax replacements here
     return input_code
 
 # Function to run the simplified code entered by the user
